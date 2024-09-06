@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Water Footprint Details</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <h1>Water Footprint Calculator</h1>
+            </div>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                
+                
+            </ul>
+            <div id="google_translate_element"></div>
+            
+        </nav>
+    </header>
+
+    <main>
+        <section id="result-section">
+            <h2>Water Footprint Details</h2>
+            <p>The product you searched for: <strong>Rice</strong></p>
+            <p>Water Footprint: <strong>2,500 liters per kilogram</strong></p>
+            <p>Season: <strong>Summer</strong></p>
+            <p>Climate: <strong>Tropical</strong></p>
+        </section>
+
+        <section id="user-satisfaction">
+            <h3>Are you satisfied with these results?</h3>
+            <button class="btn yes-btn" onclick="showTips()">Yes</button>
+            <button class="btn no-btn" onclick="askForWaterInput()">No</button>
+        </section>
+
+        <!-- Tips Section (hidden initially) -->
+        <section id="tips-section" style="display: none;">
+            <h3>Water-Saving Tips</h3>
+            <ul>
+                <li>Use drip irrigation to reduce water waste.</li>
+                <li>Grow crops that require less water in dry areas.</li>
+                <li>Water your crops during early mornings or late evenings to minimize evaporation.</li>
+            </ul>
+        </section>
+
+        <!-- Water Input Section (hidden initially) -->
+        <section id="water-input-section" style="display: none;">
+            <h3>Enter the amount of water you have:</h3>
+            <input type="number" id="water-amount" placeholder="Enter water amount in liters">
+            <button class="btn submit-btn" onclick="suggestCrops()">Submit</button>
+        </section>
+
+        <!-- Suggested Products Section (hidden initially) -->
+        <section id="suggested-products-section" style="display: none;">
+            <h3>Suggested Products Based on Your Water Amount</h3>
+            <ul id="suggested-products-list"></ul>
+
+            <!-- Water-Saving Tips after Suggesting Products -->
+            <h3>Water-Saving Tips</h3>
+            <ul>
+                <li>Optimize irrigation methods to ensure minimal water wastage.</li>
+                <li>Consider mulching to retain soil moisture for longer periods.</li>
+            </ul>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Water Footprint Calculator | All Rights Reserved</p>
+    </footer>
+
+    <script src="script1.js"></script>
+</body>
+</html>

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Water Footprint Calculator</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+    <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+    <script async src="https://docs.opencv.org/4.x/opencv.js"></script>
+    <script src="https://unpkg.com/jsqr/dist/jsQR.js"></script>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <a href="index.html"><img src="water.img.jpg" alt="Water Footprint Calculator Logo"></a>
+            </div>
+            <ul>
+                <li><a href="#home">Home</a></li>
+                <li><a href="#about">About Us</a></li>
+                <li><a href="#calculator">Calculator</a></li>
+                <li><a href="#subscribe">Subscribe</a></li>
+            </ul>
+            <div id="google_translate_element"></div>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Home Section with Background Image -->
+        <section id="home" class="section hero">
+            <div class="overlay"></div>
+            <div class="hero-content">
+                <h2>Welcome to the Water Footprint Calculator</h2>
+                <p>Calculate the water footprint of various agricultural products easily and make informed decisions about water usage.</p>
+                <a class="cta-button" href="#calculator">Get Started</a>
+            </div>
+        </section>
+
+        <!-- About Us Section -->
+        <section id="about" class="section">
+            <h2>About Us</h2>
+            <p>Our mission is to help you understand the water consumption of the products you use daily. With our calculator, you can quickly find out how much water is used to produce items like rice, cotton, and more. Let's conserve water together!</p>
+        </section>
+
+        <!-- Calculator Section -->
+        <section id="calculator" class="section">
+            <h2>Calculate Water Footprint</h2>
+            <div id="search-section">
+                <input type="text" id="product-input" placeholder="Enter product name or scan..." oninput="showSuggestions()">
+                <div id="suggestions"></div>
+                <button onclick="getWaterFootprint()">Check Water Footprint</button>
+                <button onclick="showScanner()">Scan Product</button>
+            </div>
+            <div id="result-section">
+                <h3>Water Footprint Result</h3>
+                <p id="result"></p>
+            </div>
+        </section>
+
+        <!-- QR Code Scanner Section -->
+        <section id="scanner-section" class="section" style="display: none;">
+            <h2>Real-Time QR Code Scanner</h2>
+            <video id="video" width="640" height="480" autoplay></video>
+            <canvas id="canvas" width="640" height="480" style="display:none;"></canvas>
+            <p id="scan-result"></p>
+        </section>
+
+        <!-- Subscribe Section -->
+        <section id="subscribe" class="section subscribe">
+            <h2>Subscribe to Our Newsletter</h2>
+            <p>Stay updated with the latest information and tips on water conservation by subscribing to our newsletter.</p>
+            <form id="subscribeForm">
+                <input type="email" id="email" placeholder="Enter your email" required>
+                <button type="submit">Subscribe</button>
+            </form>
+            <div id="responseMessage"></div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="social-media">
+                <a href="https://www.instagram.com/wate_rfootprint?igsh=MWg2dHd3ZWVsMGJicA==" target="_blank">Instagram</a> | 
+                <a href="https://www.linkedin.com/" target="_blank">LinkedIn</a>
+            </div>
+            <p>&copy; 2024 Water Footprint Calculator | All Rights Reserved</p>
+        </div>
+    </footer>
+
+    <script>
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({
+                pageLanguage: 'en', // Default language of your page
+                includedLanguages: 'hi,bn,te,mr,ta,ur,gu,ml,kn,pa,or,as,mai,sa,ne', // Language codes for major Indian languages
+                layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+            }, 'google_translate_element');
+        }
+
+        document.getElementById('subscribeForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            var email = document.getElementById('email').value;
+
+            emailjs.send("service_iesf6gt", "template_s7bvngl", {
+                "to_email": email,
+                "message": "Thank you for subscribing!"
+            })
+            .then(function(response) {
+                document.getElementById('responseMessage').textContent = 'Subscription successful! Check your email for confirmation.';
+            }, function(error) {
+                console.error('Email.js error:', error);
+                document.getElementById('responseMessage').textContent = 'Subscription failed. Please try again.';
+            });
+        });
+
+        function getWaterFootprint() {
+            window.location.href = 'index1.html';
+        }
+
+        function showScanner() {
+            document.getElementById('scanner-section').style.display = 'block';
+            startScanner();
+        }
+
+        function startScanner() {
+            const video = document.getElementById('video');
+            const canvas = document.getElementById('canvas');
+            const canvasContext = canvas.getContext('2d');
+            const scanResult = document.getElementById('scan-result');
+
+            navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+                .then(stream => {
+                    video.srcObject = stream;
+                    video.setAttribute('playsinline', true);
+                    video.play();
+                    requestAnimationFrame(tick);
+                })
+                .catch(error => {
+                    console.error('Error accessing camera:', error);
+                    scanResult.textContent = 'Unable to access camera. Please check camera permissions.';
+                });
+
+            function tick() {
+                if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                    canvasContext.drawImage(video, 0, 0, canvas.width, canvas.height);
+                    const imageData = canvasContext.getImageData(0, 0, canvas.width, canvas.height);
+                    const code = jsQR(imageData.data, canvas.width, canvas.height, { inversionAttempts: "dontInvert" });
+                    if (code) {
+                        scanResult.textContent = `QR Code scanned: ${code.data}`;
+                        video.srcObject.getTracks().forEach(track => track.stop());
+                    }
+                }
+                requestAnimationFrame(tick);
+            }
+        }
+    </script>
+</body>
+</html>
